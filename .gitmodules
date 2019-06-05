@@ -1,0 +1,3 @@
+[submodule "src/analyze-splatoon2"]
+	path = src/analyze-splatoon2
+	url = git@github.com:mitsu-ksgr/analyze-splatoon2.git
