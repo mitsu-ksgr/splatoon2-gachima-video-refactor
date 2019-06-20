@@ -9,6 +9,7 @@
 #
 #------------------------------------------------------------------------------
 
-python /src/analyze-splatoon2/get_cut_cmd.py $@
+#python /src/analyze-splatoon2/get_cut_cmd.py $@
+python /src/splatoon2-gachianalyzer/gachianalyzer.py $@
 
 exit 0

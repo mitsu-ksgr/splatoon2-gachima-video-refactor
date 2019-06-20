@@ -4,19 +4,30 @@
 # Constants
 #
 readonly SCRIPT_NAME=$(basename $0)
-readonly DEFAULT_DOCKER_IMG_NAME='gachima-video-retoucher'
+readonly DEFAULT_DOCKER_IMG_NAME='gachima-video-refactor'
 readonly DEFAULT_DOCKER_IMG_TAG='latest'
 
 DOCKER_IMG_NAME="${DEFAULT_DOCKER_IMG_NAME}"
 DOCKER_IMG_TAG="${DEFAULT_DOCKER_IMG_TAG}"
 DOCKER_BUILD_FLAG=false
+RUNNING_DOCKER_TAG=
 
 
 #
 # Prepare temp dir
 #
 unset TMP_DIR
-on_exit() { [[ -n "${TMP_DIR}" ]] && rm -rf "${TMP_DIR}"; }
+on_exit() {
+    [[ -n "${TMP_DIR}" ]] && rm -rf "${TMP_DIR}";
+
+    # Stop running container
+    container_id=$(
+        docker ps -aq \
+            --filter ancestor=${DOCKER_IMG_NAME}:${DOCKER_IMG_TAG} \
+            --filter status=running
+    )
+    [[ -n "${container_id}" ]] && docker container stop ${container_id}
+}
 trap on_exit EXIT
 trap 'trap - EXIT; on_exit; exit -1' INT PIPE TERM
 readonly TMP_DIR=$(mktemp -d "/tmp/${SCRIPT_NAME}.tmp.XXXXXX")
@@ -186,11 +197,21 @@ main() {
 
     # run an analysis and write the results to a tmp file.
     echo -n 'analysing.....'
+
+    # analyze-splatoon2
+    #docker run --rm \
+    #    -v ${TMP_DIR}:/work \
+    #    -t ${DOCKER_IMG_NAME}:${DOCKER_IMG_TAG} \
+    #    "/work/${input_file_name}" "/work/" \
+    #    >> ${analysis_result_file_path}
+
+    # splatoon2-gachianalyzer
     docker run --rm \
         -v ${TMP_DIR}:/work \
         -t ${DOCKER_IMG_NAME}:${DOCKER_IMG_TAG} \
-        "/work/${input_file_name}" "/work/" \
+        "/work/${input_file_name}" -p 7 -i 7 \
         >> ${analysis_result_file_path}
+
     echo 'ok!'
 
     # divide the video according to the analyssis results.
