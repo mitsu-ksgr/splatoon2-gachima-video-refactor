@@ -209,7 +209,7 @@ main() {
     docker run --rm \
         -v ${TMP_DIR}:/work \
         -t ${DOCKER_IMG_NAME}:${DOCKER_IMG_TAG} \
-        "/work/${input_file_name}" -p 7 -i 7 \
+        "/work/${input_file_name}" -p 5 -i 10 \
         >> ${analysis_result_file_path}
 
     echo 'ok!'
