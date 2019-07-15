@@ -222,7 +222,7 @@ main() {
         -v ${TMP_DIR}:/work \
         -t ${DOCKER_IMG_NAME}:${DOCKER_IMG_TAG} \
         "/work/${input_file_name}" \
-        -p OPT_NUM_OF_PROCESS -i OPT_FRAME_INTERVAL \
+        -p ${OPT_NUM_OF_PROCESS} -i ${OPT_FRAME_INTERVAL} \
         >> ${analysis_result_file_path}
 
     echo 'ok!'
