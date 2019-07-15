@@ -12,6 +12,8 @@ DOCKER_IMG_TAG="${DEFAULT_DOCKER_IMG_TAG}"
 DOCKER_BUILD_FLAG=false
 RUNNING_DOCKER_TAG=
 
+OPT_NUM_OF_PROCESS=5
+OPT_FRAME_INTERVAL=10
 
 #
 # Prepare temp dir
@@ -54,6 +56,10 @@ OUTPUT_FILE_PATH:
 Options:
     -h  show usage.
     -b  build the image first.
+    -p  number of processes for multi processing.
+        default: ${OPT_NUM_OF_PROCESS}
+    -i  frame interval to analyze.
+        default: ${OPT_FRAME_INTERVAL}
     -t  docker image name:tag, like 'splatoon2analyzer:latest'
         default: ${DEFAULT_DOCKER_IMG_NAME}:${DEFAULT_DOCKER_IMG_TAG}
 
@@ -61,7 +67,7 @@ __EOS__
 }
 
 parse_args() {
-    while getopts hbt: flag; do
+    while getopts hbt:p:i: flag; do
         case "${flag}" in
             h )
                 usage
@@ -73,6 +79,12 @@ parse_args() {
             t )
                 DOCKER_IMG_NAME=${OPTARG%:*}
                 DOCKER_IMG_TAG=${OPTARG##*:}
+                ;;
+            p )
+                OPT_NUM_OF_PROCESS=${OPTARG}
+                ;;
+            i )
+                OPT_FRAME_INTERVAL=${OPTARG}
                 ;;
             * )
                 usage
@@ -209,7 +221,8 @@ main() {
     docker run --rm \
         -v ${TMP_DIR}:/work \
         -t ${DOCKER_IMG_NAME}:${DOCKER_IMG_TAG} \
-        "/work/${input_file_name}" -p 5 -i 10 \
+        "/work/${input_file_name}" \
+        -p OPT_NUM_OF_PROCESS -i OPT_FRAME_INTERVAL \
         >> ${analysis_result_file_path}
 
     echo 'ok!'
