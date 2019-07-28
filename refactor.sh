@@ -238,6 +238,9 @@ main() {
     )
     echo 'ok!'
 
+    # remove input file from TMP dir.
+    rm ${input_file_path}
+
     # generate file
     cp ${integrated_file_path} ${output_file_path}
     echo "Succeeded! ${output_file_path}"
